@@ -9,7 +9,7 @@ const NavBar = () => {
 	const links = [
 		{ href: "/", label: "Dashboard" },
 		{ href: "/charts", label: "Wykresy" },
-		{ href: "/exchange", label: "Wymiana" },
+		{ href: "/wallet", label: "Portfel" },
 		{ href: "/profile", label: "Profil" },
 	];
 
