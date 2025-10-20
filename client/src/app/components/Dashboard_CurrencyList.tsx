@@ -1,46 +1,43 @@
-const Dashboard_CurrencyList = () => {
-	const currencies = [
-		{
-			flag: "🇪🇺",
-			code: "EUR",
-			name: "Euro",
-			amount: "2,500.00 EUR",
-			value: "10,750.00 PLN",
-		},
-		{
-			flag: "🇺🇸",
-			code: "USD",
-			name: "Dolar amerykański",
-			amount: "1,020.00 USD",
-			value: "4,072.50 PLN",
-		},
-	];
+// CurrencyList.tsx
+import Dashboard_CurrencyItem from "./Dashboard_CurrencyItem";
+import currenciesMap from "../utils/currencyMap"; // path to your currenciesMap
+import { CurrencyCode } from "../models/CurrencyCode";
 
+// Example user balances (in their native currency)
+const userBalances: Partial<Record<CurrencyCode, number>> = {
+	[CurrencyCode.EUR]: 2500,
+	[CurrencyCode.USD]: 1020,
+	[CurrencyCode.GBP]: 500,
+	[CurrencyCode.JPY]: 100000,
+	[CurrencyCode.CHF]: 300,
+};
+
+const CurrencyList = () => {
 	return (
-		<div>
-			<h3 className="text-lg font-semibold text-gray-800 mb-4">Moje Waluty</h3>
-			<div className="space-y-4">
-				{currencies.map(({ flag, code, name, amount, value }) => (
-					<div
-						key={code}
-						className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between"
-					>
-						<div className="flex items-center space-x-4">
-							<span className="text-2xl">{flag}</span>
-							<div>
-								<p className="font-bold text-gray-800">{code}</p>
-								<p className="text-sm text-gray-500">{name}</p>
-							</div>
-						</div>
-						<div>
-							<p className="font-semibold text-gray-800 text-right">{amount}</p>
-							<p className="text-sm text-gray-500 text-right">{value}</p>
-						</div>
-					</div>
-				))}
-			</div>
+		<div className="space-y-4">
+			{Object.entries(userBalances).map(([code, amount]) => {
+				const currency = currenciesMap[code as CurrencyCode];
+
+				// Calculate PLN value based on USD rate and example USD/PLN rate
+				const USD_TO_PLN = 4.3; // example static conversion rate
+				const valueInPLN = amount * (currency.rateToUSD || 0) * USD_TO_PLN;
+
+				return (
+					<Dashboard_CurrencyItem
+						key={currency.code}
+						flag={currency.flag as string}
+						code={currency.code}
+						name={currency.name}
+						amount={`${amount.toLocaleString()} ${currency.code}`}
+						value={`${valueInPLN.toLocaleString(undefined, {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2,
+						})} PLN`}
+					/>
+				);
+			})}
 		</div>
 	);
 };
 
-export default Dashboard_CurrencyList;
+export default CurrencyList;
